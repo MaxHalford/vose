@@ -8,7 +8,7 @@ I wrote this because I had a specific usecase where I needed to repeatidly sampl
 
 My feeling is that this package is too small to justify putting it on PyPI. Therefore, you have to install it from GitHub. If ever the scope grows larger I might reconsider this.
 
-```py
+```sh
 pip install git+https://github.com/MaxHalford/vose
 ```
 
@@ -124,7 +124,7 @@ As you can see, `vose.Sampler` takes less than a nanosecond to produce a random 
     <img width="60%" src="figures/construction_time.svg">
 </div>
 
-`vose.Sampler` is also fast enough to compete with `numpy` and `random`, even when including the construction time. The following Here are some numbers to give you an idea:
+`vose.Sampler` is also fast enough to compete with `numpy` and `random`, even when including the construction time. The following table summarizes a comparison I made on my laptop, with `n` being the number of weights and `k` the number of integers to sample:
 
 |    n |    k | np.random.choice   | random.choices   | vose.Sampler   | vose_sampler.VoseAlias   |
 |-----:|-----:|:-------------------|:-----------------|:---------------|:-------------------------|
