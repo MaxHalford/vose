@@ -77,17 +77,18 @@ cdef np.int_t [:] samples = sampler.sample_k(10)
 Also, this will require import the `numpy` headers in the extension definition in your `setup.py`:
 
 ```py
-setup(
-    ext_modules=cythonize(
-        [
-            Extension(
-                '*', ['your_file.pyx'],
-                include_dirs=[np.get_include()],
-                define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')]
-            ),
-        ]
-    )
+from setuptools import Extension
+from setuptools import setup
+from Cython.Build import cythonize
+import numpy as np
+
+extension = Extension(
+    '*', ['your_file.pyx'],
+    include_dirs=[np.get_include()],
+    define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')]
 )
+
+setup(ext_modules=cythonize([extension]))
 ```
 
 ## Is it reliable?
