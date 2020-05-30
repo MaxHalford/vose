@@ -67,14 +67,14 @@ cimport vose
 cimport numpy as np
 
 cdef np.float_t [:] weights = np.array([.2, .3, .5], dtype=np.float)
-cdef vose.sampler.Sampler sampler
-sampler = vose.sampler.Sampler(weights)
+cdef vose.Sampler sampler
+sampler = vose.Sampler(weights)
 
 cdef int sample = sampler.sample_1()
 cdef np.int_t [:] samples = sampler.sample_k(10)
 ```
 
-Also, this will require import the `numpy` headers in the extension definition in your `setup.py`:
+Note that this will require importing the `numpy` headers in the extension definition of your `setup.py`:
 
 ```py
 from setuptools import Extension

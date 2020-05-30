@@ -35,5 +35,5 @@ setup(
         ],
         compiler_directives={'language_level': 2}
     ),
-    package_data={'*': ['*.pxd']},
+    package_data={'vose': ['*.pxd']},
 )
