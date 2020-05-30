@@ -74,7 +74,7 @@ cdef int sample = sampler.sample_1()
 cdef np.int_t [:] samples = sampler.sample_k(10)
 ```
 
-Note that this will require importing the `numpy` headers in the extension definition of your `setup.py`:
+Note that the latter requires having to include the `numpy` headers in the extension definition of your `setup.py`:
 
 ```py
 from setuptools import Extension
@@ -118,12 +118,14 @@ Hell yeah. The following graph shows the average time taken to sample one intege
 <div align="center">
     <img width="60%" src="figures/sampling_time.svg">
 </div>
+<br>
 
 As you can see, `vose.Sampler` takes less than a nanosecond to produce a random integer. Here is the construction time:
 
 <div align="center">
     <img width="60%" src="figures/construction_time.svg">
 </div>
+<br>
 
 `vose.Sampler` is also fast enough to compete with `numpy` and `random`, even when including the construction time. The following table summarizes a comparison I made on my laptop, with `n` being the number of weights and `k` the number of integers to sample:
 
