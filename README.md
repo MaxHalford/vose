@@ -159,6 +159,15 @@ As you can see, `vose.Sampler` takes less than a nanosecond to produce a random 
 
 In summary, you probably don't need to be using `vose.Sampler` if you only need to sample once, regardless of the number of integers you wish to sample. You want to use `vose.Sampler` when you need to sample in a sequential manner, because at that point the construction time will be amortized. Indeed, this will bring you two orders of magnitude improved speed, when compared to calling `np.random.choice` or `random.choices` multiple times.
 
+## Development
+
+```sh
+git clone https://github.com/MaxHalford/vose
+cd vose
+python setup.py build_ext --inplace
+pytest
+```
+
 ## Further work
 
 - The weights assigned to each integer cannot be modified. A [search tree](https://www.wikiwand.com/en/Search_tree) can be used as a data structure that supports modifications. This allows modifying weights in `O(log(n))` time, but means sampling also happens in `O(log(n))` time. More information [here](https://stackoverflow.com/questions/34247459/an-efficient-version-alternative-to-the-alias-method-that-samples-without-replac).
