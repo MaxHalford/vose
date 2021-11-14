@@ -66,7 +66,7 @@ import numpy as np
 cimport vose
 cimport numpy as np
 
-cdef np.float_t [:] weights = np.array([.2, .3, .5], dtype=np.float)
+cdef np.float_t [:] weights = np.array([.2, .3, .5], dtype=float)
 cdef vose.Sampler sampler
 sampler = vose.Sampler(weights)
 
