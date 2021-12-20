@@ -1,12 +1,12 @@
 cimport numpy as np
-from random_wrapper cimport mt19937_64, uniform_real_distribution
+from random_wrapper cimport minstd_rand
 
 
 cdef class Sampler:
 
     cdef int n
-    cdef mt19937_64 generator
-    cdef uniform_real_distribution[double] dist
+    cdef minstd_rand generator
+    cdef int maxi
     cdef np.int_t [:] alias
     cdef np.float_t [:] proba
     cdef bint coin_toss(self, float p)

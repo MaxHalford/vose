@@ -10,7 +10,7 @@ from libcpp.deque cimport deque
 cimport cython
 cimport numpy as np
 
-from random_wrapper cimport mt19937_64, random_device, uniform_real_distribution
+from random_wrapper cimport minstd_rand, random_device
 
 __all__ = ['Sampler']
 
@@ -34,11 +34,11 @@ cdef class Sampler:
 
         cdef random_device r
         if seed is None:
-            self.generator = mt19937_64(r())
+            self.generator = minstd_rand(r())
         else:
-            self.generator = mt19937_64(seed)
+            self.generator = minstd_rand(seed)
 
-        self.dist = uniform_real_distribution[double](0.0,1.0)
+        self.maxi = self.generator.max()
 
         if copy:
             weights = weights.copy()
@@ -112,7 +112,7 @@ cdef class Sampler:
             p: Heads probability.
 
         """
-        return self.dist(self.generator) < p
+        return self.generator() < self.maxi * p
 
     cdef int fair_die(self, int n):
         """Sample a fair n-sided die.
@@ -121,7 +121,7 @@ cdef class Sampler:
             n: The number of faces on the die.
 
         """
-        return int(self.dist(self.generator) * n)
+        return self.generator() * n / self.maxi
 
     cdef int sample_1(self):
 
