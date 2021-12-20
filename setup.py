@@ -13,7 +13,7 @@ def read(fname):
 
 setup(
     name='vose',
-    version='0.0.1',
+    version='0.0.2',
     author='Max Halford',
     license='MIT',
     author_email='maxhalford25@gmail.com',
