@@ -6,35 +6,14 @@
 
 import numpy as np
 
-from libc.stdlib cimport rand
-from libc.stdlib cimport srand
-from libc.stdlib cimport RAND_MAX
 from libcpp.deque cimport deque
 cimport cython
 cimport numpy as np
 
+from random_wrapper cimport mt19937_64, random_device, uniform_real_distribution
 
 __all__ = ['Sampler']
 
-
-cdef int fair_die(int n):
-    """Sample a fair n-sided die.
-
-    Parameters:
-        n: The number of faces on the die.
-
-    """
-    return int((<double>rand() / RAND_MAX) * n)
-
-
-cdef bint coin_toss(float p):
-    """Sample a loaded coin toss.
-
-    Parameters:
-        p: Heads probability.
-
-    """
-    return (<double>rand() / RAND_MAX) < p
 
 
 cdef class Sampler:
@@ -53,12 +32,13 @@ cdef class Sampler:
 
     def __init__(self, np.float_t [:] weights not None, copy=True, seed=None):
 
-        if seed is not None:
-            srand(seed)
+        cdef random_device r
+        if seed is None:
+            self.generator = mt19937_64(r())
+        else:
+            self.generator = mt19937_64(seed)
 
-        # For some reason, the first call to rand() always returns 0, therefore we call it once to
-        # prevent the issue.
-        rand()
+        self.dist = uniform_real_distribution[double](0.0,1.0)
 
         if copy:
             weights = weights.copy()
@@ -125,13 +105,31 @@ cdef class Sampler:
         self.alias = alias
         self.proba = proba
 
+    cdef bint coin_toss(self, float p):
+        """Sample a loaded coin toss.
+
+        Parameters:
+            p: Heads probability.
+
+        """
+        return self.dist(self.generator) < p
+
+    cdef int fair_die(self, int n):
+        """Sample a fair n-sided die.
+
+        Parameters:
+            n: The number of faces on the die.
+
+        """
+        return int(self.dist(self.generator) * n)
+
     cdef int sample_1(self):
 
         # Generate a fair die roll to determine which column to inspect.
-        cdef int col = fair_die(self.n)
+        cdef int col = self.fair_die(self.n)
 
         # Generate a biased coin toss to determine which option to pick.
-        cdef bint heads = coin_toss(self.proba[col])
+        cdef bint heads = self.coin_toss(self.proba[col])
 
         # Based on the outcome, return either the column or its alias.
         if heads:
