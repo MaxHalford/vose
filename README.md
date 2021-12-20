@@ -31,7 +31,7 @@ You can then call the `.sample()` method to sample a random integer in range `[0
 
 ```py
 >>> sampler.sample()
-2
+3
 
 ```
 
@@ -39,7 +39,7 @@ You can set the `k` parameter in order to produce multiple samples.
 
 ```py
 >>> sampler.sample(k=10)
-array([1, 1, 2, 1, 2, 1, 0, 1, 3, 3])
+array([3, 3, 2, 1, 1, 2, 2, 3, 0, 2])
 
 ```
 
