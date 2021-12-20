@@ -111,6 +111,19 @@ It seems to be working correctly; at least according to the following [chi-squar
 
 ```
 
+It is also reproducible:
+
+```py
+>>> import numpy as np
+>>> import vose
+>>> probs = np.array([0.5, 0.5])
+>>> a = vose.Sampler(probs, seed=0)
+>>> b = vose.Sampler(probs, seed=0)
+>>> for _ in range(10000):
+...     assert a.sample() == b.sample()
+
+```
+
 ## Is it fast?
 
 Hell yeah. The following graph shows the average time taken to sample one integer for different amounts of weights:
