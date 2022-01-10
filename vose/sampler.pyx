@@ -24,7 +24,7 @@ cdef int fair_die(int n):
         n: The number of faces on the die.
 
     """
-    return int((<double>rand() / RAND_MAX) * n)
+    return int((<double>rand() / (RAND_MAX + 1.0)) * n)
 
 
 cdef bint coin_toss(float p):
