@@ -6,13 +6,9 @@ I wrote this because I had a specific usecase where I needed to repeatidly sampl
 
 ## Installation
 
-My feeling is that this package is too small to justify putting it on PyPI. Therefore, you have to install it from GitHub. If ever the scope grows larger I might reconsider this.
-
 ```sh
-pip install git+https://github.com/MaxHalford/vose
+pip install vose
 ```
-
-This will install `cython` as well as `numpy` if you do not already have them installed.
 
 ## Usage
 
