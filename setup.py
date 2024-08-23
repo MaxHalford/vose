@@ -13,7 +13,7 @@ def read(fname):
 
 setup(
     name='vose',
-    version='0.0.1',
+    version='0.0.2',
     author='Max Halford',
     license='MIT',
     author_email='maxhalford25@gmail.com',
@@ -24,7 +24,7 @@ setup(
     packages=['vose'],
     install_requires=['numpy'],
     extras_require={'dev': ['pytest', 'scipy']},
-    python_requires='>=3.6',
+    python_requires='>=3.10',
     ext_modules=cythonize(
         [
             Extension(

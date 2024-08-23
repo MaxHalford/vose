@@ -64,7 +64,7 @@ cdef class Sampler:
             weights = weights.copy()
 
         cdef int n = weights.size
-        cdef np.int_t [:] alias = np.zeros(n, dtype=int)
+        cdef np.int64_t [:] alias = np.zeros(n, dtype=int)
         cdef np.float_t [:] proba = np.zeros(n, dtype=float)
 
         # Compute the average probability and cache it for later use.
@@ -138,8 +138,8 @@ cdef class Sampler:
             return col
         return self.alias[col]
 
-    cdef np.int_t [:] sample_k(self, int k):
-        cdef np.int_t [:] samples = np.zeros(k, dtype=int)
+    cdef np.int64_t [:] sample_k(self, int k):
+        cdef np.int64_t [:] samples = np.zeros(k, dtype=int)
         cdef int i
         for i in range(k):
             samples[i] = self.sample_1()
