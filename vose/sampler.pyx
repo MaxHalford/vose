@@ -68,7 +68,7 @@ cdef class Sampler:
         cdef np.float_t [:] proba = np.zeros(n, dtype=float)
 
         # Compute the average probability and cache it for later use.
-        cdef np.float_t avg = 1. / n
+        cdef np.float_t avg = np.sum(weights) / n
 
         # Create two stacks to act as worklists as we populate the tables.
         cdef deque[int] small = deque[int]()
@@ -98,7 +98,7 @@ cdef class Sampler:
 
             # These probabilities have not yet been scaled up to be such that 1 / n is given weight
             # 1.0. We do this here instead.
-            proba[less] = weights[less] * n
+            proba[less] = weights[less] / avg
             alias[less] = more
 
             # Decrease the probability of the larger one by the appropriate amount.
