@@ -6,35 +6,15 @@
 
 import numpy as np
 
-from libc.stdlib cimport rand
-from libc.stdlib cimport srand
-from libc.stdlib cimport RAND_MAX
 from libcpp.deque cimport deque
+from libcpp.random cimport mt19937
+from libcpp.random cimport uniform_real_distribution
+from libcpp.random cimport uniform_int_distribution
 cimport cython
 cimport numpy as np
 
 
 __all__ = ['Sampler']
-
-
-cdef int fair_die(int n):
-    """Sample a fair n-sided die.
-
-    Parameters:
-        n: The number of faces on the die.
-
-    """
-    return int((<double>rand() / (RAND_MAX + 1.0)) * n)
-
-
-cdef bint coin_toss(float p):
-    """Sample a loaded coin toss.
-
-    Parameters:
-        p: Heads probability.
-
-    """
-    return (<double>rand() / RAND_MAX) < p
 
 
 cdef class Sampler:
@@ -53,19 +33,21 @@ cdef class Sampler:
 
     def __init__(self, np.float_t [:] weights not None, copy=True, seed=None):
 
-        if seed is not None:
-            srand(seed)
-
-        # For some reason, the first call to rand() always returns 0, therefore we call it once to
-        # prevent the issue.
-        rand()
-
         if copy:
             weights = weights.copy()
 
         cdef int n = weights.size
         cdef np.int64_t [:] alias = np.zeros(n, dtype=int)
         cdef np.float_t [:] proba = np.zeros(n, dtype=float)
+
+        # Initialize the random number generator and distributions.
+        cdef mt19937 rng
+        cdef uniform_int_distribution[int] fair_die 
+        cdef uniform_real_distribution[double] coin_toss
+
+        if seed is not None:
+            rng.seed(seed)
+        fair_die = uniform_int_distribution[int](0, n - 1) 
 
         # Compute the average probability and cache it for later use.
         cdef np.float_t avg = 1. / n
@@ -124,14 +106,17 @@ cdef class Sampler:
         self.n = n
         self.alias = alias
         self.proba = proba
+        self.rng = rng
+        self.fair_die = fair_die
+        self.coin_toss = coin_toss
 
     cdef int sample_1(self):
 
         # Generate a fair die roll to determine which column to inspect.
-        cdef int col = fair_die(self.n)
+        cdef int col = self.fair_die(self.rng)
 
         # Generate a biased coin toss to determine which option to pick.
-        cdef bint heads = coin_toss(self.proba[col])
+        cdef bint heads = self.coin_toss(self.rng) < self.proba[col]
 
         # Based on the outcome, return either the column or its alias.
         if heads:
