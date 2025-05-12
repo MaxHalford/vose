@@ -27,7 +27,7 @@ You can then call the `.sample()` method to sample a random integer in range `[0
 
 ```py
 >>> sampler.sample()
-2
+3
 
 ```
 
@@ -35,7 +35,7 @@ You can set the `k` parameter in order to produce multiple samples.
 
 ```py
 >>> sampler.sample(k=10)
-array([1, 2, 1, 1, 1, 2, 1, 3, 1, 0])
+array([3, 3, 2, 1, 1, 2, 2, 3, 0, 2])
 
 ```
 
@@ -117,6 +117,21 @@ It is also reproducible:
 >>> b = vose.Sampler(probs, seed=0)
 >>> for _ in range(10000):
 ...     assert a.sample() == b.sample()
+
+```
+
+Note that the `seed` method can be used to set the state of the sampler's RNG without having to re-initialize the weights:
+
+```py
+>>> import numpy as np
+>>> import vose
+>>> probs = np.ones(5)
+>>> a = vose.Sampler(probs, seed=3)
+>>> a.sample(4)
+array([2, 2, 2, 3])
+>>> a.seed(3)
+>>> a.sample(4)
+array([2, 2, 2, 3])
 
 ```
 
