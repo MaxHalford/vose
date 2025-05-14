@@ -7,11 +7,14 @@
 import numpy as np
 
 from libcpp.deque cimport deque
-from libcpp.random cimport mt19937
+from libcpp.random cimport mt19937_64
 from libcpp.random cimport uniform_real_distribution
 from libcpp.random cimport uniform_int_distribution
 cimport cython
 cimport numpy as np
+
+cdef extern from "<stdint.h>":
+    ctypedef unsigned int uint_fast64_t
 
 
 __all__ = ['Sampler']
@@ -41,12 +44,10 @@ cdef class Sampler:
         cdef np.float_t [:] proba = np.zeros(n, dtype=float)
 
         # Initialize the random number generator and distributions.
-        cdef mt19937 rng
+        cdef mt19937_64 rng
         cdef uniform_int_distribution[int] fair_die 
         cdef uniform_real_distribution[double] coin_toss
 
-        if seed is not None:
-            rng.seed(seed)
         fair_die = uniform_int_distribution[int](0, n - 1) 
 
         # Compute the average probability and cache it for later use.
@@ -110,6 +111,9 @@ cdef class Sampler:
         self.fair_die = fair_die
         self.coin_toss = coin_toss
 
+        if seed is not None:
+            self.seed(seed)
+
     cdef int sample_1(self):
 
         # Generate a fair die roll to determine which column to inspect.
@@ -129,6 +133,14 @@ cdef class Sampler:
         for i in range(k):
             samples[i] = self.sample_1()
         return samples
+
+    def seed(self, uint_fast64_t seed):
+        """Seed the sampler.
+
+        Parameters:
+            seed: The seed to use for the random number generator.
+        """
+        self.rng.seed(seed)
 
     def sample(self, k=1):
         """Sample a random integer.
