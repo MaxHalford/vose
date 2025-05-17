@@ -1,0 +1,57 @@
+name: Publish wheels
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build-wheels:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [linux, macos, windows]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python for cibuildwheel
+        uses: actions/setup-python@v5
+
+      - name: Install cibuildwheel
+        run: python -m pip install --upgrade cibuildwheel[all]
+
+      - name: Build wheels
+        env:
+          CIBW_BUILD: >-
+            cp310-*-*
+            cp311-*-*
+            cp312-*-*
+            cp313-*-*
+          CIBW_SKIP: >-
+            # skip problematic manylinux versions if desired:
+            # linux: cp37-manylinux_i686, cp38-manylinux_i686
+          CIBW_TEST_COMMAND: pytest {project}/tests
+          CIBW_OUTPUT_DIR: wheelhouse
+        run: |
+          cibuildwheel --platform ${{ matrix.platform }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.platform }}
+          path: wheelhouse/*.whl
+
+  upload_pypi:
+    needs: build-wheels
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4.1.7
+        with:
+          name: artifact
+          path: dist
+
+      - uses: pypa/gh-action-pypi-publish@v1.12.2
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
