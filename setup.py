@@ -24,7 +24,7 @@ setup(
     packages=['vose'],
     install_requires=['numpy'],
     extras_require={'dev': ['pytest', 'scipy']},
-    python_requires='>=3.10',
+    python_requires='>=3.11',
     ext_modules=cythonize(
         [
             Extension(
