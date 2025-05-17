@@ -13,7 +13,7 @@ def read(fname):
 
 setup(
     name='vose',
-    version='0.0.2',
+    version='0.1.0',
     author='Max Halford',
     license='MIT',
     author_email='maxhalford25@gmail.com',
@@ -30,7 +30,10 @@ setup(
             Extension(
                 '*', ['vose/sampler.pyx'],
                 include_dirs=[np.get_include()],
-                define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')]
+                define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
+                language='c++',
+                extra_compile_args=['-std=c++11'],
+                extra_link_args=['-std=c++11'],
             ),
         ],
         compiler_directives={'language_level': 2}
