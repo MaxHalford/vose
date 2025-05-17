@@ -1,2 +1,27 @@
+[tool.poetry]
+name = "vose"
+version = "0.1.1"
+description = "Cython implementation of Vose's Alias method."
+authors = ["Max Halford <maxhalford25@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/MaxHalford/vose"
+packages = [{ include = "vose" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License"
+]
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+numpy = "*"
+
+[tool.poetry.extras]
+dev = ["pytest", "scipy"]
+
 [build-system]
-requires = ['setuptools', 'wheel', 'Cython', 'numpy>=1.22']
+requires = ["poetry-core>=1.0.0", "Cython", "numpy"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.build]
+script = "build.py"
