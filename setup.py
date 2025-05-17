@@ -30,10 +30,7 @@ setup(
             Extension(
                 '*', ['vose/sampler.pyx'],
                 include_dirs=[np.get_include()],
-                define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
-                language='c++',
-                extra_compile_args=['-std=c++11'],
-                extra_link_args=['-std=c++11'],
+                define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')]
             ),
         ],
         compiler_directives={'language_level': 2}
