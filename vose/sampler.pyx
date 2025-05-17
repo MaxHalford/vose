@@ -6,35 +6,18 @@
 
 import numpy as np
 
-from libc.stdlib cimport rand
-from libc.stdlib cimport srand
-from libc.stdlib cimport RAND_MAX
 from libcpp.deque cimport deque
+from libcpp.random cimport mt19937_64
+from libcpp.random cimport uniform_real_distribution
+from libcpp.random cimport uniform_int_distribution
 cimport cython
 cimport numpy as np
 
+cdef extern from "<stdint.h>":
+    ctypedef unsigned int uint_fast64_t
+
 
 __all__ = ['Sampler']
-
-
-cdef int fair_die(int n):
-    """Sample a fair n-sided die.
-
-    Parameters:
-        n: The number of faces on the die.
-
-    """
-    return int((<double>rand() / (RAND_MAX + 1.0)) * n)
-
-
-cdef bint coin_toss(float p):
-    """Sample a loaded coin toss.
-
-    Parameters:
-        p: Heads probability.
-
-    """
-    return (<double>rand() / RAND_MAX) < p
 
 
 cdef class Sampler:
@@ -53,13 +36,6 @@ cdef class Sampler:
 
     def __init__(self, np.float_t [:] weights not None, copy=True, seed=None):
 
-        if seed is not None:
-            srand(seed)
-
-        # For some reason, the first call to rand() always returns 0, therefore we call it once to
-        # prevent the issue.
-        rand()
-
         if copy:
             weights = weights.copy()
 
@@ -67,8 +43,15 @@ cdef class Sampler:
         cdef np.int64_t [:] alias = np.zeros(n, dtype=int)
         cdef np.float_t [:] proba = np.zeros(n, dtype=float)
 
+        # Initialize the random number generator and distributions.
+        cdef mt19937_64 rng
+        cdef uniform_int_distribution[int] fair_die 
+        cdef uniform_real_distribution[double] coin_toss
+
+        fair_die = uniform_int_distribution[int](0, n - 1) 
+
         # Compute the average probability and cache it for later use.
-        cdef np.float_t avg = 1. / n
+        cdef np.float_t avg = np.sum(weights) / n
 
         # Create two stacks to act as worklists as we populate the tables.
         cdef deque[int] small = deque[int]()
@@ -98,7 +81,7 @@ cdef class Sampler:
 
             # These probabilities have not yet been scaled up to be such that 1 / n is given weight
             # 1.0. We do this here instead.
-            proba[less] = weights[less] * n
+            proba[less] = weights[less] / avg
             alias[less] = more
 
             # Decrease the probability of the larger one by the appropriate amount.
@@ -124,14 +107,20 @@ cdef class Sampler:
         self.n = n
         self.alias = alias
         self.proba = proba
+        self.rng = rng
+        self.fair_die = fair_die
+        self.coin_toss = coin_toss
+
+        if seed is not None:
+            self.seed(seed)
 
     cdef int sample_1(self):
 
         # Generate a fair die roll to determine which column to inspect.
-        cdef int col = fair_die(self.n)
+        cdef int col = self.fair_die(self.rng)
 
         # Generate a biased coin toss to determine which option to pick.
-        cdef bint heads = coin_toss(self.proba[col])
+        cdef bint heads = self.coin_toss(self.rng) < self.proba[col]
 
         # Based on the outcome, return either the column or its alias.
         if heads:
@@ -144,6 +133,14 @@ cdef class Sampler:
         for i in range(k):
             samples[i] = self.sample_1()
         return samples
+
+    def seed(self, uint_fast64_t seed):
+        """Seed the sampler.
+
+        Parameters:
+            seed: The seed to use for the random number generator.
+        """
+        self.rng.seed(seed)
 
     def sample(self, k=1):
         """Sample a random integer.
