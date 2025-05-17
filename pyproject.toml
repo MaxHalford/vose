@@ -20,7 +20,7 @@ numpy = "*"
 dev = ["pytest", "scipy"]
 
 [build-system]
-requires = ["poetry-core>=1.0.0", "Cython", "numpy"]
+requires = ["poetry-core", "setuptools", "cython", "numpy"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.build]
