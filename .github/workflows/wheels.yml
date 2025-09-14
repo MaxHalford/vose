@@ -59,7 +59,7 @@ jobs:
         submodules: true  # Optional, use if you have submodules
 
     - name: Build SDist
-      run: pipx run build --sdist
+      run: pipx install -e . && pipx run build --sdist
 
     - uses: actions/upload-artifact@v4
       with:
