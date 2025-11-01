@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     strategy:
       matrix:
-        os: [ linux-intel, linux-arm, windows, macOS-intel, macOS-arm, pyodide ]
+        os: [ linux-intel, linux-arm, windows, macOS-intel, macOS-arm ]
         include:
           - archs: auto
             platform: auto
@@ -24,9 +24,6 @@ jobs:
           - os: macos-arm
             runs-on: macos-latest
             archs: auto,universal2
-          - os: pyodide
-            runs-on: ubuntu-latest
-            platform: pyodide
 
     steps:
       - uses: actions/checkout@v4
