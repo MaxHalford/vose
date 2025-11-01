@@ -27,7 +27,7 @@ You can then call the `.sample()` method to sample a random integer in range `[0
 
 ```py
 >>> sampler.sample()
-2
+3
 
 ```
 
@@ -35,7 +35,7 @@ You can set the `k` parameter in order to produce multiple samples.
 
 ```py
 >>> sampler.sample(k=10)
-array([2, 1, 0, 2, 3, 1, 2, 2, 1, 3])
+array([3, 3, 2, 1, 1, 2, 2, 3, 0, 2])
 
 ```
 
@@ -128,10 +128,10 @@ Note that the `seed` method can be used to set the state of the sampler's RNG wi
 >>> probs = np.ones(5)
 >>> a = vose.Sampler(probs, seed=3)
 >>> a.sample(4)
-array([3, 3, 4, 0])
+array([2, 2, 2, 3])
 >>> a.seed(3)
 >>> a.sample(4)
-array([3, 3, 4, 0])
+array([2, 2, 2, 3])
 
 ```
 
