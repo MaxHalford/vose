@@ -187,8 +187,8 @@ In summary, you probably don't need to be using `vose.Sampler` if you only need 
 ```sh
 git clone https://github.com/MaxHalford/vose
 cd vose
-python setup.py build_ext --inplace
-pytest
+uv sync
+uv run pytest
 ```
 
 ## Further work
