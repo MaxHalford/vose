@@ -1,27 +1,29 @@
-[tool.poetry]
+[project]
 name = "vose"
-version = "0.1.1"
+version = "0.2.0"
 description = "Cython implementation of Vose's Alias method."
-authors = ["Max Halford <maxhalford25@gmail.com>"]
-license = "MIT"
+authors = [{ name = "Max Halford", email = "maxhalford25@gmail.com" }]
+requires-python = ">=3.11"
 readme = "README.md"
-homepage = "https://github.com/MaxHalford/vose"
-packages = [{ include = "vose" }]
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License"
-]
+license = "MIT"
+dependencies = ["numpy"]
 
-[tool.poetry.dependencies]
-python = ">=3.11"
-numpy = "*"
-
-[tool.poetry.extras]
-dev = ["pytest", "scipy"]
+[project.urls]
+Homepage = "https://github.com/MaxHalford/vose"
 
 [build-system]
-requires = ["poetry-core", "setuptools", "cython", "numpy"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools", "Cython", "numpy"]
+build-backend = "setuptools.build_meta"
 
-[tool.poetry.build]
-script = "build.py"
+[tool.uv]
+package = true
+default-groups = "all"
+
+[tool.setuptools]
+packages = ["vose"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+    "scipy>=1.16.3",
+]
