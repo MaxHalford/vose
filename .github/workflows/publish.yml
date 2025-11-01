@@ -58,8 +58,11 @@ jobs:
         fetch-depth: 0  # Optional, use if you use setuptools_scm
         submodules: true  # Optional, use if you have submodules
 
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+
     - name: Build SDist
-      run: pipx install -e . && pipx run build --sdist
+      run: uv build --sdist
 
     - uses: actions/upload-artifact@v4
       with:
