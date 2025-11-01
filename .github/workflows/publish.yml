@@ -21,9 +21,10 @@ jobs:
             runs-on: windows-latest
           - os: macos-intel
             runs-on: macos-latest
+            archs: universal2
           - os: macos-arm
             runs-on: macos-latest
-            archs: auto,universal2
+            archs: universal2
 
     steps:
       - uses: actions/checkout@v4
@@ -34,7 +35,6 @@ jobs:
           CIBW_PLATFORM: ${{ matrix.platform }}
           CIBW_ARCHS: ${{ matrix.archs }}
           CIBW_BUILD: >-
-            cp311*
             cp312*
             cp313*
 

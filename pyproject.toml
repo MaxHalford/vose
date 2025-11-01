@@ -1,6 +1,6 @@
 [project]
 name = "vose"
-version = "0.2.1"
+version = "0.2.2"
 description = "Cython implementation of Vose's Alias method."
 authors = [{ name = "Max Halford", email = "maxhalford25@gmail.com" }]
 requires-python = ">=3.11"
