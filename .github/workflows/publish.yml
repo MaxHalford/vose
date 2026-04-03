@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     strategy:
       matrix:
-        os: [ linux-intel, linux-arm, windows, macOS-intel, macOS-arm ]
+        os: [ linux-intel, linux-arm, windows, macos ]
         include:
           - archs: auto
             platform: auto
@@ -19,10 +19,7 @@ jobs:
             runs-on: ubuntu-24.04-arm
           - os: windows
             runs-on: windows-latest
-          - os: macos-intel
-            runs-on: macos-latest
-            archs: universal2
-          - os: macos-arm
+          - os: macos
             runs-on: macos-latest
             archs: universal2
 
@@ -34,9 +31,7 @@ jobs:
         env:
           CIBW_PLATFORM: ${{ matrix.platform }}
           CIBW_ARCHS: ${{ matrix.archs }}
-          CIBW_BUILD: >-
-            cp312*
-            cp313*
+          CIBW_BUILD: cp311*
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
