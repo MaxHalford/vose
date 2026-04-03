@@ -13,7 +13,8 @@ from libcpp.random cimport uniform_int_distribution
 cimport cython
 cimport numpy as np
 
-from libc.stdint cimport uint_fast64_t
+cdef extern from "<stdint.h>":
+    ctypedef unsigned int uint_fast64_t
 
 
 __all__ = ['Sampler']
@@ -39,8 +40,8 @@ cdef class Sampler:
             weights = weights.copy()
 
         cdef int n = weights.size
-        cdef np.int64_t [:] alias = np.empty(n, dtype=np.int64)
-        cdef np.float_t [:] proba = np.empty(n, dtype=np.float64)
+        cdef np.int64_t [:] alias = np.zeros(n, dtype=int)
+        cdef np.float_t [:] proba = np.zeros(n, dtype=float)
 
         # Initialize the random number generator and distributions.
         cdef mt19937_64 rng
@@ -50,15 +51,14 @@ cdef class Sampler:
         fair_die = uniform_int_distribution[int](0, n - 1) 
 
         # Compute the average probability and cache it for later use.
-        cdef int i
-        cdef double total = 0.0
-        for i in range(n):
-            total += weights[i]
-        cdef np.float_t avg = total / n
+        cdef np.float_t avg = np.sum(weights) / n
 
         # Create two stacks to act as worklists as we populate the tables.
         cdef deque[int] small = deque[int]()
         cdef deque[int] large = deque[int]()
+
+        # Populate the stacks with the input probabilities.
+        cdef int i
         for i in range(n):
             # If the probability is below the average probability, then we add it to the small
             # list; otherwise we add it to the large list.
@@ -128,7 +128,7 @@ cdef class Sampler:
         return self.alias[col]
 
     cdef np.int64_t [:] sample_k(self, int k):
-        cdef np.int64_t [:] samples = np.empty(k, dtype=np.int64)
+        cdef np.int64_t [:] samples = np.zeros(k, dtype=int)
         cdef int i
         for i in range(k):
             samples[i] = self.sample_1()
@@ -142,7 +142,7 @@ cdef class Sampler:
         """
         self.rng.seed(seed)
 
-    def sample(self, int k=1):
+    def sample(self, k=1):
         """Sample a random integer.
 
         Parameters:
